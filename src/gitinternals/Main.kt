@@ -34,13 +34,11 @@ fun buildGitObject(file: File?) {
     inflaterInputStream.use {
         while (inflaterInputStream.available() > 0) {
             val charFromStream = inflaterInputStream.read().toChar()
-            // TODO: prettify this
-            val charToPrint = if (charFromStream == nullChar) "\n" else charFromStream
-            result += charToPrint
-            if (charToPrint == "\n") {
-                printHeader(result)
+            if (charFromStream == nullChar) {
+                printHeader(result + "\n")
                 break
             }
+            result += charFromStream
         }
     }
 }
