@@ -11,7 +11,7 @@ fun main() {
     println("Enter git object hash:")
     val gitObjectHash = readLine()!!
     val file = findFileWithObject(gitFolderLocation, gitObjectHash)
-    printGitObject(file)
+    buildGitObject(file)
 }
 
 fun findFileWithObject(gitFolderLocation: String, gitObjectHash: String): File? {
@@ -24,19 +24,28 @@ fun findFileWithObject(gitFolderLocation: String, gitObjectHash: String): File? 
             }?.value
 }
 
-fun printGitObject(file: File?) {
+fun buildGitObject(file: File?) {
     if (file == null) return
 
     val nullChar = 0.toChar()
     val fileInputStream = FileInputStream(file)
     val inflaterInputStream = InflaterInputStream(fileInputStream)
-
+    var result = ""
     inflaterInputStream.use {
         while (inflaterInputStream.available() > 0) {
-            // TODO: debug this, throws java.io.EOFException: Unexpected end of ZLIB input stream
             val charFromStream = inflaterInputStream.read().toChar()
+            // TODO: prettify this
             val charToPrint = if (charFromStream == nullChar) "\n" else charFromStream
-            print(charToPrint)
+            result += charToPrint
+            if (charToPrint == "\n") {
+                printHeader(result)
+                break
+            }
         }
     }
+}
+
+fun printHeader(header: String) {
+    val headerList = header.split(" ")
+    println("type:${headerList[0]} length:${headerList[1]}")
 }
